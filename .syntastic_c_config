@@ -1,0 +1,2 @@
+-Isubprojects/optargs
+-DSYSDIR_PATH="foobar"
