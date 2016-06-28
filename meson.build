@@ -24,7 +24,8 @@ project(
 	[
 		'werror=true',
 		'warning_level=3',
-		'stdsplit=false'
+		'stdsplit=false',
+		'c_std=c11'
 	]
 )
 
