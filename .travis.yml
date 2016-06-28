@@ -1,0 +1,31 @@
+# Travis CI configuration.
+
+language: c
+
+sudo: required
+dist: trusty
+
+compiler:
+    - clang
+    - gcc
+
+addons:
+  apt:
+    packages:
+      - valgrind
+      - python3
+
+before_script:
+  - wget https://github.com/mesonbuild/meson/releases/download/0.32.0/meson-0.32.0.tar.gz
+  - wget https://github.com/ninja-build/ninja/releases/download/v1.5.3/ninja-linux.zip
+  - tar -xf meson-*.tar.gz
+  - unzip ninja-linux.zip
+
+script:
+    - PATH=$PWD/meson-0.32.0:$PWD:$PATH
+    - BDIR=$(mktemp -d)
+    - meson.py $BDIR
+    - mesonconf.py -Derrorlogs=true $BDIR
+    - ninja -v -C $BDIR
+    - ninja -v -C $BDIR test
+    - ninja -v -C $BDIR test-valgrind
