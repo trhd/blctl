@@ -1,3 +1,5 @@
+### Setting things up. ###################################################
+
 SYSDIR_SRC = meson.current_source_dir() + '/intel_backlight'
 SYSDIR_DST = meson.current_build_dir() + '/intel_backlight'
 TESTER = find_program('tester.sh')
@@ -22,6 +24,8 @@ BLCTL_TEST_STATIC = executable(
 		'-DSYSDIR_PATH="' + SYSDIR_DST + '"'
 	]
 )
+
+### Some basic tests with the production binary. #########################
 
 test(
 	'prod: --help',
@@ -55,6 +59,8 @@ test(
 	valgrind_args : VALGRIND_ARGS,
 	is_parallel : false
 )
+
+### Adjusting current value. #############################################
 
 test(
 	'tester: adjust: +10%',
@@ -134,6 +140,30 @@ test(
 )
 
 test(
+	'tester: adjust: 150%',
+	TESTER,
+	args :
+	[
+		SYSDIR_SRC, SYSDIR_DST, '100.0', meson.current_build_dir() + '/blctl_tester', '--adjust', '150%'
+	],
+	valgrind_args : VALGRIND_ARGS,
+	is_parallel : false
+)
+
+test(
+	'tester: adjust: -150%',
+	TESTER,
+	args :
+	[
+		SYSDIR_SRC, SYSDIR_DST, '0.0', meson.current_build_dir() + '/blctl_tester', '--adjust', '-150%'
+	],
+	valgrind_args : VALGRIND_ARGS,
+	is_parallel : false
+)
+
+### Setting explicit values. #############################################
+
+test(
 	'tester: set: 27%',
 	TESTER,
 	args :
@@ -200,13 +230,27 @@ test(
 )
 
 test(
-	'tester: set: -27%',
+	'tester: set: 100.1%',
 	TESTER,
 	args :
 	[
-		SYSDIR_SRC, SYSDIR_DST, '', meson.current_build_dir() + '/blctl_tester', '--set', '-27%'
+		SYSDIR_SRC, SYSDIR_DST, '', meson.current_build_dir() + '/blctl_tester', '--set', '100.1%'
 	],
 	is_parallel : false,
 	valgrind_args : VALGRIND_ARGS,
 	should_fail : true
 )
+
+test(
+	'tester: set: -0.1%',
+	TESTER,
+	args :
+	[
+		SYSDIR_SRC, SYSDIR_DST, '', meson.current_build_dir() + '/blctl_tester', '--set', '-0.1%'
+	],
+	is_parallel : false,
+	valgrind_args : VALGRIND_ARGS,
+	should_fail : true
+)
+
+### The end. #############################################################
