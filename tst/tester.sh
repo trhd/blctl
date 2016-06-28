@@ -7,4 +7,4 @@ printf "Expecting output : '%s'\n" "$RET"
 shift 3
 OUT="$("$@")"
 printf "Got output       : '%s'\n" "$OUT"
-[ "$OUT" == "$RET" ]
+[ "$OUT" = "$RET" ]
