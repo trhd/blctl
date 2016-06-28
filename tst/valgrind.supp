@@ -1,0 +1,17 @@
+{
+   BashError1
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   obj:/usr/bin/bash
+   fun:main
+}
+{
+   BashError2
+   Memcheck:Leak
+   match-leak-kinds: definite
+   ...
+   fun:set_default_locale
+   fun:main
+}
+

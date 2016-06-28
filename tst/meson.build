@@ -1,6 +1,15 @@
 SYSDIR_SRC = meson.current_source_dir() + '/intel_backlight'
 SYSDIR_DST = meson.current_build_dir() + '/intel_backlight'
 TESTER = find_program('tester.sh')
+find_program('sh')
+VALGRIND_ARGS = [
+	'--trace-children=yes',
+	'--trace-children-skip=cp,rm',
+	'--leak-check=full',
+	'--show-leak-kinds=all',
+	'--error-exitcode=1',
+	'--suppressions=' + meson.current_source_dir() + '/valgrind.supp',
+]
 BLCTL_TEST_STATIC = executable(
 	'blctl_test_static',
 	[
@@ -17,20 +26,23 @@ BLCTL_TEST_STATIC = executable(
 test(
 	'prod: --help',
 	BLCTL,
-	args : '--help'
+	args : '--help',
+	valgrind_args : VALGRIND_ARGS,
 )
 
 test(
 	'prod: --foobar',
 	BLCTL,
 	args : '--foobar',
+	valgrind_args : VALGRIND_ARGS,
 	should_fail : true
 )
 
 test(
 	'prod: --help + --quiet',
 	BLCTL,
-	args : [ '--quiet', '--help' ]
+	args : [ '--quiet', '--help' ],
+	valgrind_args : VALGRIND_ARGS,
 )
 
 test(
@@ -40,6 +52,7 @@ test(
 	[
 		SYSDIR_SRC, SYSDIR_DST, '56.0', meson.current_build_dir() + '/blctl_test_static'
 	],
+	valgrind_args : VALGRIND_ARGS,
 	is_parallel : false
 )
 
@@ -50,6 +63,7 @@ test(
 	[
 		SYSDIR_SRC, SYSDIR_DST, '66.0', meson.current_build_dir() + '/blctl_test_static', '--adjust', '10%'
 	],
+	valgrind_args : VALGRIND_ARGS,
 	is_parallel : false
 )
 
@@ -60,6 +74,7 @@ test(
 	[
 		SYSDIR_SRC, SYSDIR_DST, '46.0', meson.current_build_dir() + '/blctl_test_static', '--adjust', '-10%'
 	],
+	valgrind_args : VALGRIND_ARGS,
 	is_parallel : false
 )
 
@@ -70,6 +85,7 @@ test(
 	[
 		SYSDIR_SRC, SYSDIR_DST, '', meson.current_build_dir() + '/blctl_test_static', '--adjust', '-10%', '--quiet'
 	],
+	valgrind_args : VALGRIND_ARGS,
 	is_parallel : false
 )
 
@@ -80,6 +96,7 @@ test(
 	[
 		SYSDIR_SRC, SYSDIR_DST, '27.0', meson.current_build_dir() + '/blctl_test_static', '--set', '27%'
 	],
+	valgrind_args : VALGRIND_ARGS,
 	is_parallel : false
 )
 
@@ -90,6 +107,7 @@ test(
 	[
 		SYSDIR_SRC, SYSDIR_DST, '', meson.current_build_dir() + '/blctl_test_static', '--set', '27%', '--quiet'
 	],
+	valgrind_args : VALGRIND_ARGS,
 	is_parallel : false
 )
 
@@ -101,5 +119,6 @@ test(
 		SYSDIR_SRC, SYSDIR_DST, '', meson.current_build_dir() + '/blctl_test_static', '--set', '-27%'
 	],
 	is_parallel : false,
+	valgrind_args : VALGRIND_ARGS,
 	should_fail : true
 )
