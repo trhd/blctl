@@ -27,11 +27,11 @@
 
 static const char *sysdir = SYSDIR_PATH;
 static const char *about = "This utility will read a backlight's "
-	"brightness from\n\n  " SYSDIR_PATH "\n\nand display it to the user as a "
-	"percentage of the backlight's maximum brightness. Additionally, this"
-	" utility can also adjust the backlight's value before reading it for"
-	" the user (by setting it to an explicit value or by adjusting it by "
-	"a given percentage).";
+	"brightness from\n\n  " SYSDIR_PATH "\n\nand display it to the user "
+	"as a percentage of the backlight's maximum brightness. Additionally,"
+	" this utility can also adjust the backlight's value before reading "
+	"it for the user (by setting it to an explicit value or by adjusting "
+	"it by a given percentage).";
 
 enum action
 {
@@ -62,20 +62,23 @@ read_d_from_file(const char *f, int *d)
 
 	if (!h)
 	{
-		fprintf(stderr, "ERROR: Failed to open file '%s': %s.\n", p, strerror(errno));
+		fprintf(stderr, "ERROR: Failed to open file '%s': %s.\n",
+				p, strerror(errno));
 		rv = -1;
 	}
 	else
 	{
 		if (fscanf(h, "%d", d) < 1)
 		{
-			fprintf(stderr, "ERROR: Failed to read an integer from '%s': %s.\n", p, strerror(ferror(h)));
+			fprintf(stderr, "ERROR: Failed to read an integer from '%s':"
+					" %s.\n", p, strerror(ferror(h)));
 			rv = -1;
 		}
 
 		if (fclose(h))
 		{
-			fprintf(stderr, "ERROR: Failed to close the file '%s': %s.\n", p, strerror(errno));
+			fprintf(stderr, "ERROR: Failed to close the file '%s': %s.\n",
+					p, strerror(errno));
 			rv = -1;
 		}
 	}
@@ -102,20 +105,23 @@ write_d_to_file(const char *f, int c)
 
 	if (!h)
 	{
-		fprintf(stderr, "ERROR: Failed to open file '%s': %s.\n", p, strerror(errno));
+		fprintf(stderr, "ERROR: Failed to open file '%s': %s.\n",
+				p, strerror(errno));
 		rv = -1;
 	}
 	else
 	{
 		if (fprintf(h, "%d", c) < 1)
 		{
-			fprintf(stderr, "ERROR: Failed to write an integer to file '%s': %s.\n", p, strerror(ferror(h)));
+			fprintf(stderr, "ERROR: Failed to write an integer to file "
+					"'%s': %s.\n", p, strerror(ferror(h)));
 			rv = -1;
 		}
 
 		if (fclose(h))
 		{
-			fprintf(stderr, "ERROR: Failed to close the file '%s': %s.\n", p, strerror(errno));
+			fprintf(stderr, "ERROR: Failed to close the file '%s': %s.\n",
+					p, strerror(errno));
 			rv = -1;
 		}
 	}
@@ -130,7 +136,8 @@ get_current_value(int *d)
 {
 	assert(d);
 
-	return read_d_from_file("brightness", d);
+	return read_d_from_file("brightness", d)
+		|| *d >= 0 ? 0 : -1;
 }
 
 /************************************************************************/
@@ -140,7 +147,8 @@ get_maximum_value(int *d)
 {
 	assert(d);
 
-	return read_d_from_file("max_brightness", d);
+	return read_d_from_file("max_brightness", d)
+		|| *d > 0 ? 0 : -1;
 }
 
 /************************************************************************/
@@ -157,7 +165,8 @@ set_current_percentage(float c)
 
 	if (c < 0)
 	{
-		fprintf(stderr, "ERROR: Cannot set backlight brighness to a negative percentage.\n");
+		fprintf(stderr, "ERROR: Cannot set backlight brighness to a "
+				"negative percentage.\n");
 		return -1;
 	}
 
@@ -173,7 +182,8 @@ percentage_to_float(const char *p, float *f)
 
 	if (sscanf(p, "%f", f) != 1)
 	{
-		fprintf(stderr, "ERROR: Failed to parse input '%s' (expected percentage).\n", p);
+		fprintf(stderr, "ERROR: Failed to parse input '%s' (expected "
+				"percentage).\n", p);
 		return -1;
 	}
 
@@ -192,13 +202,7 @@ get_percentage(float *f)
 	if (get_current_value(&c) || get_maximum_value(&m))
 		return -1;
 
-	if (c < 0 || m < 0)
-		return -1;
-
-	if (!c)
-		*f = 0;
-	else
-		*f = 100 * c / m;
+	*f = 100 * c / m;
 
 	return 0;
 }
@@ -259,7 +263,8 @@ main(int ac, char **av)
 	{
 		[ADJUST] =
 		{
-			.description = "Adjust backlight brightness by the given percentage.",
+			.description = "Adjust backlight brightness by the given "
+				"percentage.",
 			.long_option = "adjust",
 			.short_option = 'a',
 			.argument =
@@ -271,7 +276,8 @@ main(int ac, char **av)
 
 		[SET] =
 		{
-			.description = "Set the backlight brightness to the given percentage.",
+			.description = "Set the backlight brightness to the given "
+				"percentage.",
 			.long_option = "set",
 			.short_option = 's',
 			.argument =
@@ -318,7 +324,8 @@ main(int ac, char **av)
 
 	if (set && adj)
 	{
-		fprintf(stderr, "ERROR: Conflicting options; only one of \"adjust\" and \"set\" can be given at a time.\n");
+		fprintf(stderr, "ERROR: Conflicting options; only one of "
+				"\"adjust\" and \"set\" can be given at a time.\n");
 		return EXIT_FAILURE;
 	}
 
