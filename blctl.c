@@ -157,25 +157,27 @@ static int
 set_current_percentage(float c)
 {
 	int m;
-	
-	if (get_maximum_value(&m))
-		return -1;
-
-	c = c * m / 100;
 
 	if (c < 0)
+		fprintf(stderr, "ERROR: Cannot set backlight brightness percentage"
+				" to a negative value.\n");
+	else if (c > 100)
+		fprintf(stderr, "ERROR: Cannot set backlight brightness percentage"
+				" to a value exceeding 100%%.\n");
+	else if (get_maximum_value(&m))
+	{}
+	else
 	{
-		fprintf(stderr, "ERROR: Cannot set backlight brighness to a "
-				"negative percentage.\n");
-		return -1;
+		c = c * m / 100;
+		return write_d_to_file("brightness", c);
 	}
 
-	return write_d_to_file("brightness", c);
+	return -1;
 }
 /************************************************************************/
 
 static int
-percentage_to_float(const char *p, float *f)
+percentage_str_to_float(const char *p, float *f)
 {
 	assert(p);
 	assert(f);
@@ -216,10 +218,15 @@ adjust_current_percentage_by(const char *pct)
 
 	float c, a;
 
-	if (get_percentage(&c) || percentage_to_float(pct, &a))
+	if (get_percentage(&c) || percentage_str_to_float(pct, &a))
 		return -1;
 
-	c = c + a < 0 ? 0 : c + a;
+	c = c + a;
+
+	if (c < 0)
+		c = 0;
+	else if (c > 100)
+		c = 100;
 
 	return set_current_percentage(c);
 }
@@ -248,7 +255,7 @@ set_percentage_to(const char *p)
 
 	float f;
 
-	if (percentage_to_float(p, &f))
+	if (percentage_str_to_float(p, &f))
 		return -1;
 
 	return set_current_percentage(f);
@@ -297,7 +304,7 @@ main(int ac, char **av)
 
 		[QUIET] =
 		{
-			.description = "Do not print the brighness of the backlight.",
+			.description = "Do not print the brightness of the backlight.",
 			.long_option = "quiet",
 			.short_option = 'q',
 			.argument = { .mandatory = optargs_no },
