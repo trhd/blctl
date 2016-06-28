@@ -90,6 +90,50 @@ test(
 )
 
 test(
+	'static: adjust: 100%',
+	TESTER,
+	args :
+	[
+		SYSDIR_SRC, SYSDIR_DST, '100.0', meson.current_build_dir() + '/blctl_test_static', '--adjust', '100%'
+	],
+	valgrind_args : VALGRIND_ARGS,
+	is_parallel : false
+)
+
+test(
+	'static: adjust --quiet: 100%',
+	TESTER,
+	args :
+	[
+		SYSDIR_SRC, SYSDIR_DST, '', meson.current_build_dir() + '/blctl_test_static', '--adjust', '100%', '--quiet'
+	],
+	valgrind_args : VALGRIND_ARGS,
+	is_parallel : false
+)
+
+test(
+	'static: adjust: -100%',
+	TESTER,
+	args :
+	[
+		SYSDIR_SRC, SYSDIR_DST, '0.0', meson.current_build_dir() + '/blctl_test_static', '--adjust', '-100%'
+	],
+	valgrind_args : VALGRIND_ARGS,
+	is_parallel : false
+)
+
+test(
+	'static: adjust --quiet: -100%',
+	TESTER,
+	args :
+	[
+		SYSDIR_SRC, SYSDIR_DST, '', meson.current_build_dir() + '/blctl_test_static', '--adjust', '-100%', '--quiet'
+	],
+	valgrind_args : VALGRIND_ARGS,
+	is_parallel : false
+)
+
+test(
 	'static: set: 27%',
 	TESTER,
 	args :
@@ -106,6 +150,50 @@ test(
 	args :
 	[
 		SYSDIR_SRC, SYSDIR_DST, '', meson.current_build_dir() + '/blctl_test_static', '--set', '27%', '--quiet'
+	],
+	valgrind_args : VALGRIND_ARGS,
+	is_parallel : false
+)
+
+test(
+	'static: set: 0',
+	TESTER,
+	args :
+	[
+		SYSDIR_SRC, SYSDIR_DST, '0.0', meson.current_build_dir() + '/blctl_test_static', '--set', '0'
+	],
+	valgrind_args : VALGRIND_ARGS,
+	is_parallel : false
+)
+
+test(
+	'static: set --quiet: 0',
+	TESTER,
+	args :
+	[
+		SYSDIR_SRC, SYSDIR_DST, '', meson.current_build_dir() + '/blctl_test_static', '--set', '0', '--quiet'
+	],
+	valgrind_args : VALGRIND_ARGS,
+	is_parallel : false
+)
+
+test(
+	'static: set: 100',
+	TESTER,
+	args :
+	[
+		SYSDIR_SRC, SYSDIR_DST, '100.0', meson.current_build_dir() + '/blctl_test_static', '--set', '100'
+	],
+	valgrind_args : VALGRIND_ARGS,
+	is_parallel : false
+)
+
+test(
+	'static: set --quiet: 100',
+	TESTER,
+	args :
+	[
+		SYSDIR_SRC, SYSDIR_DST, '', meson.current_build_dir() + '/blctl_test_static', '--set', '100', '--quiet'
 	],
 	valgrind_args : VALGRIND_ARGS,
 	is_parallel : false
