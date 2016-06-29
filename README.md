@@ -1,7 +1,7 @@
 [![Build Status](https://travis-ci.org/trhd/blctl.svg)](https://travis-ci.org/trhd/blctl)
 
-optargs
-=======
+blctl
+=====
 
 
 About
