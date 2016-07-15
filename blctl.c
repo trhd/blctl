@@ -71,6 +71,77 @@ mksysfspath(const char *f, char *b, size_t bl)
 
 /************************************************************************/
 
+static FILE *
+open_file(const char *f, const char *m)
+{
+	assert(f);
+	assert(m);
+
+	FILE *rv = fopen(f, m);
+
+	if (!rv)
+		fprintf(stderr, "ERROR: Failed to open file '%s': %s.\n", f, strerror(errno));
+
+	return rv;
+}
+
+/************************************************************************/
+
+static int
+close_file_handle(const char *f, FILE *h)
+{
+	assert(f);
+	assert(h);
+
+	if (fclose(h))
+	{
+		fprintf(stderr, "ERROR: Failed to close the file handle for '%s': %s.\n",
+				f, strerror(errno));
+		return -1;
+	}
+
+	return 0;
+}
+
+/************************************************************************/
+
+static int
+scan_d_from_file(const char *f, FILE *h, int *d)
+{
+	assert(f);
+	assert(h);
+	assert(d);
+
+	if (fscanf(h, "%d", d) < 1)
+	{
+		fprintf(stderr, "ERROR: Failed to read an integer from '%s':"
+				" %s.\n", f, strerror(ferror(h)));
+		return -1;
+	}
+
+	return 0;
+}
+
+/************************************************************************/
+
+static int
+print_d_to_file(const char *f, FILE *h, int d)
+{
+	assert(f);
+	assert(h);
+
+	if (fprintf(h, "%d", d) < 1)
+	{
+		fprintf(stderr, "ERROR: Failed to write an integer to file "
+				"'%s': %s.\n", f, strerror(ferror(h)));
+		return -1;
+	}
+
+	return 0;
+}
+
+/************************************************************************/
+
 static int
 read_d_from_file(const char *f, int *d)
 {
@@ -78,36 +149,18 @@ read_d_from_file(const char *f, int *d)
 	assert(d);
 
 	char p[PATH_MAX + 1];
-	FILE *h;
-	int rv = 0;
+	FILE *h = NULL;
+	int rv;
 
-	if (mksysfspath(f, p, sizeof(p)))
-		return -1;
-
-	h = fopen(p, "r");
-
-	if (!h)
-	{
-		fprintf(stderr, "ERROR: Failed to open file '%s': %s.\n",
-				p, strerror(errno));
+	if (mksysfspath(f, p, sizeof(p))
+			|| !(h = open_file(p, "r"))
+			|| scan_d_from_file(p, h, d))
 		rv = -1;
-	}
 	else
-	{
-		if (fscanf(h, "%d", d) < 1)
-		{
-			fprintf(stderr, "ERROR: Failed to read an integer from '%s':"
-					" %s.\n", p, strerror(ferror(h)));
-			rv = -1;
-		}
+		rv = 0;
 
-		if (fclose(h))
-		{
-			fprintf(stderr, "ERROR: Failed to close the file '%s': %s.\n",
-					p, strerror(errno));
-			rv = -1;
-		}
-	}
+	if (h && close_file_handle(f, h))
+		rv = -1;
 
 	return rv;
 }
@@ -120,36 +173,18 @@ write_d_to_file(const char *f, int c)
 	assert(f);
 
 	char p[PATH_MAX + 1];
-	FILE *h;
-	int rv = 0;
-	
-	if (mksysfspath(f, p, sizeof(p)))
-		return -1;
+	FILE *h = NULL;
+	int rv;
 
-	h = fopen(p, "w");
-
-	if (!h)
-	{
-		fprintf(stderr, "ERROR: Failed to open file '%s': %s.\n",
-				p, strerror(errno));
+	if (mksysfspath(f, p, sizeof(p))
+			|| !(h = open_file(p, "w"))
+			|| print_d_to_file(p, h, c))
 		rv = -1;
-	}
 	else
-	{
-		if (fprintf(h, "%d", c) < 1)
-		{
-			fprintf(stderr, "ERROR: Failed to write an integer to file "
-					"'%s': %s.\n", p, strerror(ferror(h)));
-			rv = -1;
-		}
+		rv = 0;
 
-		if (fclose(h))
-		{
-			fprintf(stderr, "ERROR: Failed to close the file '%s': %s.\n",
-					p, strerror(errno));
-			rv = -1;
-		}
-	}
+	if (h && close_file_handle(f, h))
+		rv = -1;
 
 	return rv;
 }
@@ -262,7 +297,7 @@ static int
 print_percentage()
 {
 	float p;
-	
+
 	if (get_percentage(&p))
 		return -1;
 
