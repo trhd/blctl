@@ -45,6 +45,33 @@ enum action
 /************************************************************************/
 
 static int
+mksysfspath(const char *f, char *b, size_t bl)
+{
+	assert(f);
+	assert(b);
+
+	strncpy(b, sysdir, bl);
+	bl -= strlen(sysdir);
+
+	strncat(b, "/", bl);
+	bl -= 1;
+
+	strncat(b, f, bl);
+	bl -= strlen(f);
+
+	if (bl <= 0)
+	{
+		fprintf(stderr, "ERROR: Failed to form the path to the sysfs "
+				"control file: %s.\n", strerror(errno));
+		return -1;
+	}
+
+	return 0;
+}
+
+/************************************************************************/
+
+static int
 read_d_from_file(const char *f, int *d)
 {
 	assert(f);
@@ -53,10 +80,9 @@ read_d_from_file(const char *f, int *d)
 	char p[PATH_MAX + 1];
 	FILE *h;
 	int rv = 0;
-	
-	strcpy(p, sysdir);
-	strcat(p, "/");
-	strcat(p, f);
+
+	if (mksysfspath(f, p, sizeof(p)))
+		return -1;
 
 	h = fopen(p, "r");
 
@@ -97,9 +123,8 @@ write_d_to_file(const char *f, int c)
 	FILE *h;
 	int rv = 0;
 	
-	strcpy(p, sysdir);
-	strcat(p, "/");
-	strcat(p, f);
+	if (mksysfspath(f, p, sizeof(p)))
+		return -1;
 
 	h = fopen(p, "w");
 
