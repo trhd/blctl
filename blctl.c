@@ -380,14 +380,14 @@ main(int ac, char **av)
 		return EXIT_FAILURE;
 	}
 
-	if (optargs_opt_by_long(opts, "help"))
+	if (optargs_opt_by_index(opts, HELP))
 	{
 		optargs_print_help(av[0], about, opts, NULL);
 		return EXIT_SUCCESS;
 	}
 
-	adj = optargs_opt_by_long(opts, "adjust");
-	set = optargs_opt_by_long(opts, "set");
+	adj = optargs_opt_by_index(opts, ADJUST);
+	set = optargs_opt_by_index(opts, SET);
 
 	if (set && adj)
 	{
