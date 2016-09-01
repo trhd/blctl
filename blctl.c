@@ -28,10 +28,10 @@
 static const char *sysdir = SYSDIR_PATH;
 static const char *about = "This utility will read a backlight's "
 	"brightness from\n\n  " SYSDIR_PATH "\n\nand display it to the user "
-	"as a percentage of the backlight's maximum brightness. Additionally,"
-	" this utility can also adjust the backlight's value before reading "
-	"it for the user (by setting it to an explicit value or by adjusting "
-	"it by a given percentage).";
+	"as a percentage of the backlight's maximum brightness. Additionally, "
+	"this utility can also adjust the backlight's brightness before "
+	"displaying it to the user (by setting it to an explicit percentage "
+	"or by adjusting it by the given amount).";
 
 enum action
 {
