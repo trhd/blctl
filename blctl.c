@@ -359,7 +359,6 @@ main(int ac, char **av)
 			.description = "Print this help text.",
 			.long_option = "help",
 			.short_option = 'h',
-			.argument = { .mandatory = optargs_no },
 		},
 
 		[QUIET] =
@@ -367,7 +366,6 @@ main(int ac, char **av)
 			.description = "Do not print the brightness of the backlight.",
 			.long_option = "quiet",
 			.short_option = 'q',
-			.argument = { .mandatory = optargs_no },
 		},
 
 		[_ACTION_COUNT] = optargs_opt_eol
