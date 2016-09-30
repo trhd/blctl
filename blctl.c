@@ -25,7 +25,6 @@
 #include <stdio.h>
 #include "optargs.h"
 
-static const char *sysdir = SYSDIR_PATH;
 static const char *about = "This utility will read a backlight's "
 	"brightness from\n\n  " SYSDIR_PATH "\n\nand display it to the user "
 	"as a percentage of the backlight's maximum brightness. Additionally, "
@@ -50,8 +49,8 @@ mksysfspath(const char *f, char *b, size_t bl)
 	assert(f);
 	assert(b);
 
-	strncpy(b, sysdir, bl);
-	bl -= strlen(sysdir);
+	strncpy(b, SYSDIR_PATH, bl);
+	bl -= strlen(SYSDIR_PATH);
 
 	strncat(b, "/", bl);
 	bl -= 1;
