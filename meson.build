@@ -1,4 +1,4 @@
-# blctl -- A small utility for controlling backlight's brightness.
+# blctl -- A small utility for controlling a backlight's brightness.
 # Copyright (C) 2016 Hemmo Nieminen
 #
 # This program is free software; you can redistribute it and/or modify
