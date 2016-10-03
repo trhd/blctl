@@ -35,11 +35,20 @@ static const char *about = "This utility will read a backlight's "
 enum action
 {
 	HELP,
+	VERSION,
 	QUIET,
 	ADJUST,
 	SET,
 	_ACTION_COUNT
 };
+
+/************************************************************************/
+
+static void
+print_version_information()
+{
+	printf("blctl v" BLCTL_VERSION ", GPLv2, Copyright (C) Hemmo Nieminen\n");
+}
 
 /************************************************************************/
 
@@ -367,6 +376,13 @@ main(int ac, char **av)
 			.short_option = 'q',
 		},
 
+		[VERSION] =
+		{
+			.description = "Print version information.",
+			.long_option = "version",
+			.short_option = 'v'
+		},
+
 		[_ACTION_COUNT] = optargs_opt_eol
 	};
 	const char *set, *adj;
@@ -380,6 +396,12 @@ main(int ac, char **av)
 	if (optargs_opt_by_index(opts, HELP))
 	{
 		optargs_print_help(av[0], about, opts, NULL);
+		return EXIT_SUCCESS;
+	}
+
+	if (optargs_opt_by_index(opts, VERSION))
+	{
+		print_version_information();
 		return EXIT_SUCCESS;
 	}
 

@@ -15,13 +15,14 @@ VALGRIND_ARGS = [
 BLCTL_TEST_STATIC = executable(
 	'blctl_tester',
 	[
-		'../blctl.c',
+		meson.source_root() + '/blctl.c',
 		OPTARGS_SRC
 	],
 	include_directories : OPTARGS_HDR,
 	c_args :
 	[
-		'-DSYSDIR_PATH="' + SYSDIR_DST + '"'
+		'-DSYSDIR_PATH="' + SYSDIR_DST + '"',
+		'-DBLCTL_VERSION="' + meson.project_version() + '"'
 	]
 )
 
@@ -47,6 +48,18 @@ test(
 	BLCTL,
 	args : [ '--quiet', '--help' ],
 	valgrind_args : VALGRIND_ARGS,
+)
+
+test(
+	'prod: --version',
+	TESTER,
+	args :
+	[
+		SYSDIR_SRC, SYSDIR_DST,
+			'blctl v@0@, GPLv2, Copyright (C) Hemmo Nieminen'.format(meson.project_version()),
+			BLCTL.full_path(), '--version'
+	],
+	valgrind_args : VALGRIND_ARGS
 )
 
 test(

@@ -34,7 +34,10 @@ OPTARGS = subproject('optargs')
 OPTARGS_HDR = OPTARGS.get_variable('OPTARGS_HDR')
 OPTARGS_SRC = OPTARGS.get_variable('OPTARGS_SRC')
 
-defines = [ '-DSYSDIR_PATH="' + get_option('SYSDIR_PATH') + '"' ]
+defines = [
+	'-DSYSDIR_PATH="' + get_option('SYSDIR_PATH') + '"',
+	'-DBLCTL_VERSION="' + meson.project_version() + '"'
+]
 if get_option('buildtype') == 'release'
 	defines += [ '-DNDEBUG' ]
 endif
