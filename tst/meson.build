@@ -56,7 +56,7 @@ test(
 	args :
 	[
 		SYSDIR_SRC, SYSDIR_DST,
-			'blctl v@0@, GPLv2, Copyright (C) Hemmo Nieminen'.format(meson.project_version()),
+			'blctl v@0@, GPLv2, Copyright (C) 2016 Hemmo Nieminen'.format(meson.project_version()),
 			BLCTL.full_path(), '--version'
 	],
 	valgrind_args : VALGRIND_ARGS
