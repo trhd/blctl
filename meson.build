@@ -18,7 +18,7 @@
 project(
 	'blctl',
 	'c',
-	version : '1.0.8',
+	version : '1.0.9',
 	license : 'GPLv2',
 	default_options :
 	[
