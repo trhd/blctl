@@ -67,7 +67,7 @@ test(
 	TESTER,
 	args :
 	[
-		SYSDIR_SRC, SYSDIR_DST, '56.0', BLCTL_TEST_STATIC.full_path()
+		SYSDIR_SRC, SYSDIR_DST, '56.7', BLCTL_TEST_STATIC.full_path()
 	],
 	valgrind_args : VALGRIND_ARGS,
 	is_parallel : false
@@ -80,7 +80,7 @@ test(
 	TESTER,
 	args :
 	[
-		SYSDIR_SRC, SYSDIR_DST, '66.0', BLCTL_TEST_STATIC.full_path(), '--adjust', '10%'
+		SYSDIR_SRC, SYSDIR_DST, '66.7', BLCTL_TEST_STATIC.full_path(), '--adjust', '10%'
 	],
 	valgrind_args : VALGRIND_ARGS,
 	is_parallel : false
@@ -91,7 +91,7 @@ test(
 	TESTER,
 	args :
 	[
-		SYSDIR_SRC, SYSDIR_DST, '46.0', BLCTL_TEST_STATIC.full_path(), '--adjust', '-10%'
+		SYSDIR_SRC, SYSDIR_DST, '46.7', BLCTL_TEST_STATIC.full_path(), '--adjust', '-10%'
 	],
 	valgrind_args : VALGRIND_ARGS,
 	is_parallel : false

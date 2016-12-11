@@ -216,6 +216,19 @@ get_maximum_value(int *d)
 /************************************************************************/
 
 static int
+round_float(float f)
+{
+	int r = f;
+
+	if (f - r >= 0.5)
+		return r + 1;
+	else
+		return r;
+}
+
+/************************************************************************/
+
+static int
 set_current_percentage(float c)
 {
 	int m;
@@ -230,8 +243,8 @@ set_current_percentage(float c)
 	{}
 	else
 	{
-		c = c * m / 100;
-		return write_d_to_file("brightness", c);
+		c = c * m / 100.0;
+		return write_d_to_file("brightness", round_float(c));
 	}
 
 	return -1;
@@ -266,7 +279,7 @@ get_percentage(float *f)
 	if (get_current_value(&c) || get_maximum_value(&m))
 		return -1;
 
-	*f = 100 * c / m;
+	*f = 100.0 * c / m;
 
 	return 0;
 }
