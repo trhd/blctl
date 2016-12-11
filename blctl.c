@@ -245,7 +245,7 @@ set_current_percentage(float c)
 /************************************************************************/
 
 static bool
-percentage_str_to_float(const char *p, float *f)
+str_to_float(const char *p, float *f)
 {
 	assert(p);
 	assert(f);
@@ -286,7 +286,7 @@ adjust_current_percentage_by(const char *pct)
 
 	float c, a;
 
-	if (get_percentage(&c) || percentage_str_to_float(pct, &a))
+	if (get_percentage(&c) || str_to_float(pct, &a))
 		return true;
 
 	c = c + a;
@@ -323,7 +323,7 @@ set_percentage_to(const char *p)
 
 	float f;
 
-	if (percentage_str_to_float(p, &f))
+	if (str_to_float(p, &f))
 		return true;
 
 	return set_current_percentage(f);
