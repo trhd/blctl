@@ -22,6 +22,7 @@
 #include <linux/limits.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include "optargs.h"
 
@@ -52,7 +53,7 @@ print_version_information()
 
 /************************************************************************/
 
-static int
+static bool
 mksysfspath(const char *f, char *b, size_t bl)
 {
 	assert(f);
@@ -63,12 +64,12 @@ mksysfspath(const char *f, char *b, size_t bl)
 	{
 		fprintf(stderr, "ERROR: Failed to form the path to the sysfs "
 				"control file: %s.\n", strerror(ENOMEM));
-		return -1;
+		return true;
 	}
 
 	sprintf(b, "%s/%s", SYSDIR_PATH, f);
 
-	return 0;
+	return false;
 }
 
 /************************************************************************/
@@ -89,7 +90,7 @@ open_file(const char *f, const char *m)
 
 /************************************************************************/
 
-static int
+static bool
 close_file_handle(const char *f, FILE *h)
 {
 	assert(f);
@@ -99,15 +100,15 @@ close_file_handle(const char *f, FILE *h)
 	{
 		fprintf(stderr, "ERROR: Failed to close the file handle for '%s': %s.\n",
 				f, strerror(errno));
-		return -1;
+		return true;
 	}
 
-	return 0;
+	return false;
 }
 
 /************************************************************************/
 
-static int
+static bool
 scan_d_from_file(const char *f, FILE *h, int *d)
 {
 	assert(f);
@@ -118,15 +119,15 @@ scan_d_from_file(const char *f, FILE *h, int *d)
 	{
 		fprintf(stderr, "ERROR: Failed to read an integer from '%s':"
 				" %s.\n", f, strerror(ferror(h)));
-		return -1;
+		return true;
 	}
 
-	return 0;
+	return false;
 }
 
 /************************************************************************/
 
-static int
+static bool
 print_d_to_file(const char *f, FILE *h, int d)
 {
 	assert(f);
@@ -136,15 +137,15 @@ print_d_to_file(const char *f, FILE *h, int d)
 	{
 		fprintf(stderr, "ERROR: Failed to write an integer to file "
 				"'%s': %s.\n", f, strerror(ferror(h)));
-		return -1;
+		return true;
 	}
 
-	return 0;
+	return false;
 }
 
 /************************************************************************/
 
-static int
+static bool
 read_d_from_file(const char *f, int *d)
 {
 	assert(f);
@@ -152,65 +153,57 @@ read_d_from_file(const char *f, int *d)
 
 	char p[PATH_MAX + 1];
 	FILE *h = NULL;
-	int rv;
+	bool rv;
 
 	if (mksysfspath(f, p, sizeof(p))
 			|| !(h = open_file(p, "r"))
 			|| scan_d_from_file(p, h, d))
-		rv = -1;
+		rv = true;
 	else
-		rv = 0;
+		rv = false;
 
-	if (h && close_file_handle(f, h))
-		rv = -1;
-
-	return rv;
+	return (h && close_file_handle(f, h)) || rv;
 }
 
 /************************************************************************/
 
-static int
+static bool
 write_d_to_file(const char *f, int c)
 {
 	assert(f);
 
 	char p[PATH_MAX + 1];
 	FILE *h = NULL;
-	int rv;
+	bool rv;
 
 	if (mksysfspath(f, p, sizeof(p))
 			|| !(h = open_file(p, "w"))
 			|| print_d_to_file(p, h, c))
-		rv = -1;
+		rv = true;
 	else
-		rv = 0;
+		rv = false;
 
-	if (h && close_file_handle(f, h))
-		rv = -1;
-
-	return rv;
+	return (h && close_file_handle(f, h)) || rv;
 }
 
 /************************************************************************/
 
-static int
+static bool
 get_current_value(int *d)
 {
 	assert(d);
 
-	return read_d_from_file("brightness", d)
-		|| *d >= 0 ? 0 : -1;
+	return read_d_from_file("brightness", d) || *d < 0;
 }
 
 /************************************************************************/
 
-static int
+static bool
 get_maximum_value(int *d)
 {
 	assert(d);
 
-	return read_d_from_file("max_brightness", d)
-		|| *d > 0 ? 0 : -1;
+	return read_d_from_file("max_brightness", d) || *d <= 0;
 }
 
 /************************************************************************/
@@ -228,7 +221,7 @@ round_float(float f)
 
 /************************************************************************/
 
-static int
+static bool
 set_current_percentage(float c)
 {
 	int m;
@@ -247,11 +240,11 @@ set_current_percentage(float c)
 		return write_d_to_file("brightness", round_float(c));
 	}
 
-	return -1;
+	return true;
 }
 /************************************************************************/
 
-static int
+static bool
 percentage_str_to_float(const char *p, float *f)
 {
 	assert(p);
@@ -261,15 +254,15 @@ percentage_str_to_float(const char *p, float *f)
 	{
 		fprintf(stderr, "ERROR: Failed to parse input '%s' (expected "
 				"percentage).\n", p);
-		return -1;
+		return true;
 	}
 
-	return 0;
+	return false;
 }
 
 /************************************************************************/
 
-static int
+static bool
 get_percentage(float *f)
 {
 	assert(f);
@@ -277,16 +270,16 @@ get_percentage(float *f)
 	int c, m;
 
 	if (get_current_value(&c) || get_maximum_value(&m))
-		return -1;
+		return true;
 
 	*f = 100.0 * c / m;
 
-	return 0;
+	return false;
 }
 
 /************************************************************************/
 
-static int
+static bool
 adjust_current_percentage_by(const char *pct)
 {
 	assert(pct);
@@ -294,7 +287,7 @@ adjust_current_percentage_by(const char *pct)
 	float c, a;
 
 	if (get_percentage(&c) || percentage_str_to_float(pct, &a))
-		return -1;
+		return true;
 
 	c = c + a;
 
@@ -308,22 +301,22 @@ adjust_current_percentage_by(const char *pct)
 
 /************************************************************************/
 
-static int
+static bool
 print_percentage()
 {
 	float p;
 
 	if (get_percentage(&p))
-		return -1;
+		return true;
 
 	printf("%.1f\n", p);
 
-	return 0;
+	return false;
 }
 
 /************************************************************************/
 
-static int
+static bool
 set_percentage_to(const char *p)
 {
 	assert(p);
@@ -331,7 +324,7 @@ set_percentage_to(const char *p)
 	float f;
 
 	if (percentage_str_to_float(p, &f))
-		return -1;
+		return true;
 
 	return set_current_percentage(f);
 }
