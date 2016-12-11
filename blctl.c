@@ -57,22 +57,16 @@ mksysfspath(const char *f, char *b, size_t bl)
 {
 	assert(f);
 	assert(b);
+	assert(bl);
 
-	strncpy(b, SYSDIR_PATH, bl);
-	bl -= strlen(SYSDIR_PATH);
-
-	strncat(b, "/", bl);
-	bl -= 1;
-
-	strncat(b, f, bl);
-	bl -= strlen(f);
-
-	if (bl <= 0)
+	if (bl <= strlen(SYSDIR_PATH) + 1 + strlen(f))
 	{
 		fprintf(stderr, "ERROR: Failed to form the path to the sysfs "
-				"control file: %s.\n", strerror(errno));
+				"control file: %s.\n", strerror(ENOMEM));
 		return -1;
 	}
+
+	sprintf(b, "%s/%s", SYSDIR_PATH, f);
 
 	return 0;
 }
