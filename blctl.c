@@ -1,6 +1,6 @@
 /**
  * blctl -- A small utility for controlling a backlight's brightness.
- * Copyright (C) 2016 Hemmo Nieminen
+ * Copyright (C) 2016-2017 Hemmo Nieminen
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,7 +48,7 @@ enum action
 static void
 print_version_information()
 {
-	printf("blctl v" BLCTL_VERSION ", GPLv2, Copyright (C) 2016 Hemmo Nieminen\n");
+	printf("blctl v" BLCTL_VERSION ", GPLv2, Copyright (C) 2016-2017 Hemmo Nieminen\n");
 }
 
 /************************************************************************/
