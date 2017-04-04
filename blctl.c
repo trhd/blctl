@@ -342,11 +342,14 @@ main(int ac, char **av)
 				"percentage.",
 			.long_option = "adjust",
 			.short_option = 'a',
-			.argument =
+			.argument = (struct optargs_arg [])
 			{
-				.name = "pct",
-				.mandatory = optargs_yes
-			},
+				{
+					.name = "pct",
+					.type = optargs_arg_any
+				},
+				optargs_arg_eol
+			}
 		},
 
 		[SET] =
@@ -355,11 +358,14 @@ main(int ac, char **av)
 				"percentage.",
 			.long_option = "set",
 			.short_option = 's',
-			.argument =
+			.argument = (struct optargs_arg [])
 			{
-				.name = "pct",
-				.mandatory = optargs_yes
-			},
+				{
+					.name = "pct",
+					.type = optargs_arg_any
+				},
+				optargs_arg_eol
+			}
 		},
 
 		[HELP] =
@@ -387,26 +393,26 @@ main(int ac, char **av)
 	};
 	const char *set, *adj;
 
-	if (optargs_parse(ac, (const char **)av, opts))
+	if (optargs_parse_opts(ac, (const char **)av, opts) < 0)
 	{
 		optargs_print_help(av[0], about, opts, NULL);
 		return EXIT_FAILURE;
 	}
 
-	if (optargs_opt_by_index(opts, HELP))
+	if (optargs_opt_count_by_index(opts, HELP))
 	{
 		optargs_print_help(av[0], about, opts, NULL);
 		return EXIT_SUCCESS;
 	}
 
-	if (optargs_opt_by_index(opts, VERSION))
+	if (optargs_opt_count_by_index(opts, VERSION))
 	{
 		print_version_information();
 		return EXIT_SUCCESS;
 	}
 
-	adj = optargs_opt_by_index(opts, ADJUST);
-	set = optargs_opt_by_index(opts, SET);
+	adj = optargs_opt_value_by_index(opts, ADJUST);
+	set = optargs_opt_value_by_index(opts, SET);
 
 	if (set && adj)
 	{
@@ -421,7 +427,7 @@ main(int ac, char **av)
 	if (adj && adjust_current_percentage_by(adj))
 		return EXIT_FAILURE;
 
-	if (optargs_opt_by_long(opts, "quiet"))
+	if (optargs_opt_count_by_long(opts, "quiet"))
 		return EXIT_SUCCESS;
 
 	return print_percentage() ? EXIT_FAILURE : EXIT_SUCCESS;
