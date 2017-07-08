@@ -21,14 +21,6 @@ SYSDIR_SRC = meson.current_source_dir() + '/intel_backlight'
 SYSDIR_DST = meson.current_build_dir() + '/intel_backlight'
 TESTER = find_program('tester.sh')
 find_program('sh')
-VALGRIND_ARGS = [
-	'--trace-children=yes',
-	'--trace-children-skip=cp,rm',
-	'--leak-check=full',
-	'--show-leak-kinds=all',
-	'--error-exitcode=1',
-	'--suppressions=' + meson.current_source_dir() + '/valgrind.supp',
-]
 BLCTL_TEST_STATIC = executable(
 	'blctl_tester',
 	[
@@ -43,28 +35,38 @@ BLCTL_TEST_STATIC = executable(
 	]
 )
 
+add_test_setup(
+	'valgrind',
+	exe_wrapper : [
+		'valgrind',
+			'--trace-children=yes',
+			'--trace-children-skip=bash,cp,rm',
+			'--leak-check=full',
+			'--show-leak-kinds=all',
+			'--suppressions=' + meson.current_source_dir() + '/valgrind.supp',
+			'--error-exitcode=1'],
+	timeout_multiplier : 20
+	)
+
 ### Some basic tests with the production binary. #########################
 
 test(
 	'prod: --help',
 	BLCTL,
-	args : '--help',
-	valgrind_args : VALGRIND_ARGS,
+	args : '--help'
 )
 
 test(
 	'prod: --foobar',
 	BLCTL,
 	args : '--foobar',
-	valgrind_args : VALGRIND_ARGS,
 	should_fail : true
 )
 
 test(
 	'prod: --help + --quiet',
 	BLCTL,
-	args : [ '--quiet', '--help' ],
-	valgrind_args : VALGRIND_ARGS,
+	args : [ '--quiet', '--help' ]
 )
 
 test(
@@ -75,8 +77,7 @@ test(
 		SYSDIR_SRC, SYSDIR_DST,
 			'blctl v@0@, GPLv2, Copyright (C) 2016-2017 Hemmo Nieminen'.format(meson.project_version()),
 			BLCTL.full_path(), '--version'
-	],
-	valgrind_args : VALGRIND_ARGS
+	]
 )
 
 test(
@@ -86,7 +87,6 @@ test(
 	[
 		SYSDIR_SRC, SYSDIR_DST, '56.7', BLCTL_TEST_STATIC.full_path()
 	],
-	valgrind_args : VALGRIND_ARGS,
 	is_parallel : false
 )
 
@@ -99,7 +99,6 @@ test(
 	[
 		SYSDIR_SRC, SYSDIR_DST, '66.7', BLCTL_TEST_STATIC.full_path(), '--adjust', '10%'
 	],
-	valgrind_args : VALGRIND_ARGS,
 	is_parallel : false
 )
 
@@ -110,7 +109,6 @@ test(
 	[
 		SYSDIR_SRC, SYSDIR_DST, '46.7', BLCTL_TEST_STATIC.full_path(), '--adjust', '-10%'
 	],
-	valgrind_args : VALGRIND_ARGS,
 	is_parallel : false
 )
 
@@ -121,7 +119,6 @@ test(
 	[
 		SYSDIR_SRC, SYSDIR_DST, '', BLCTL_TEST_STATIC.full_path(), '--adjust', '-10%', '--quiet'
 	],
-	valgrind_args : VALGRIND_ARGS,
 	is_parallel : false
 )
 
@@ -132,7 +129,6 @@ test(
 	[
 		SYSDIR_SRC, SYSDIR_DST, '100.0', BLCTL_TEST_STATIC.full_path(), '--adjust', '100%'
 	],
-	valgrind_args : VALGRIND_ARGS,
 	is_parallel : false
 )
 
@@ -143,7 +139,6 @@ test(
 	[
 		SYSDIR_SRC, SYSDIR_DST, '', BLCTL_TEST_STATIC.full_path(), '--adjust', '100%', '--quiet'
 	],
-	valgrind_args : VALGRIND_ARGS,
 	is_parallel : false
 )
 
@@ -154,7 +149,6 @@ test(
 	[
 		SYSDIR_SRC, SYSDIR_DST, '0.0', BLCTL_TEST_STATIC.full_path(), '--adjust', '-100%'
 	],
-	valgrind_args : VALGRIND_ARGS,
 	is_parallel : false
 )
 
@@ -165,7 +159,6 @@ test(
 	[
 		SYSDIR_SRC, SYSDIR_DST, '', BLCTL_TEST_STATIC.full_path(), '--adjust', '-100%', '--quiet'
 	],
-	valgrind_args : VALGRIND_ARGS,
 	is_parallel : false
 )
 
@@ -176,7 +169,6 @@ test(
 	[
 		SYSDIR_SRC, SYSDIR_DST, '100.0', BLCTL_TEST_STATIC.full_path(), '--adjust', '150%'
 	],
-	valgrind_args : VALGRIND_ARGS,
 	is_parallel : false
 )
 
@@ -187,7 +179,6 @@ test(
 	[
 		SYSDIR_SRC, SYSDIR_DST, '0.0', BLCTL_TEST_STATIC.full_path(), '--adjust', '-150%'
 	],
-	valgrind_args : VALGRIND_ARGS,
 	is_parallel : false
 )
 
@@ -200,7 +191,6 @@ test(
 	[
 		SYSDIR_SRC, SYSDIR_DST, '27.0', BLCTL_TEST_STATIC.full_path(), '--set', '27%'
 	],
-	valgrind_args : VALGRIND_ARGS,
 	is_parallel : false
 )
 
@@ -211,7 +201,6 @@ test(
 	[
 		SYSDIR_SRC, SYSDIR_DST, '', BLCTL_TEST_STATIC.full_path(), '--set', '27%', '--quiet'
 	],
-	valgrind_args : VALGRIND_ARGS,
 	is_parallel : false
 )
 
@@ -222,7 +211,6 @@ test(
 	[
 		SYSDIR_SRC, SYSDIR_DST, '0.0', BLCTL_TEST_STATIC.full_path(), '--set', '0'
 	],
-	valgrind_args : VALGRIND_ARGS,
 	is_parallel : false
 )
 
@@ -233,7 +221,6 @@ test(
 	[
 		SYSDIR_SRC, SYSDIR_DST, '', BLCTL_TEST_STATIC.full_path(), '--set', '0', '--quiet'
 	],
-	valgrind_args : VALGRIND_ARGS,
 	is_parallel : false
 )
 
@@ -244,7 +231,6 @@ test(
 	[
 		SYSDIR_SRC, SYSDIR_DST, '100.0', BLCTL_TEST_STATIC.full_path(), '--set', '100'
 	],
-	valgrind_args : VALGRIND_ARGS,
 	is_parallel : false
 )
 
@@ -255,7 +241,6 @@ test(
 	[
 		SYSDIR_SRC, SYSDIR_DST, '', BLCTL_TEST_STATIC.full_path(), '--set', '100', '--quiet'
 	],
-	valgrind_args : VALGRIND_ARGS,
 	is_parallel : false
 )
 
@@ -267,7 +252,6 @@ test(
 		SYSDIR_SRC, SYSDIR_DST, '', BLCTL_TEST_STATIC.full_path(), '--set', '100.1%'
 	],
 	is_parallel : false,
-	valgrind_args : VALGRIND_ARGS,
 	should_fail : true
 )
 
@@ -279,7 +263,6 @@ test(
 		SYSDIR_SRC, SYSDIR_DST, '', BLCTL_TEST_STATIC.full_path(), '--set', '-0.1%'
 	],
 	is_parallel : false,
-	valgrind_args : VALGRIND_ARGS,
 	should_fail : true
 )
 
