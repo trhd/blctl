@@ -20,18 +20,15 @@ SYSDIR_SRC = meson.current_source_dir() + '/intel_backlight'
 SYSDIR_DST = meson.current_build_dir() + '/intel_backlight'
 TESTER = find_program('tester.sh')
 find_program('sh')
-BLCTL_TEST_STATIC = executable(
+blctl_tester = executable(
 	'blctl_tester',
-	[
-		meson.source_root() + '/blctl.c',
-		OPTARGS_SRC
-	],
-	include_directories : OPTARGS_HDR,
+	meson.source_root() + '/blctl.c',
 	c_args :
 	[
 		'-DSYSDIR_PATH="' + SYSDIR_DST + '"',
 		'-DBLCTL_VERSION="' + meson.project_version() + '"'
-	]
+	],
+	dependencies : optargs
 )
 
 add_test_setup(
@@ -51,20 +48,20 @@ add_test_setup(
 
 test(
 	'prod: --help',
-	BLCTL,
+	blctl,
 	args : '--help'
 )
 
 test(
 	'prod: --foobar',
-	BLCTL,
+	blctl,
 	args : '--foobar',
 	should_fail : true
 )
 
 test(
 	'prod: --help + --quiet',
-	BLCTL,
+	blctl,
 	args : [ '--quiet', '--help' ]
 )
 
@@ -75,7 +72,7 @@ test(
 	[
 		SYSDIR_SRC, SYSDIR_DST,
 			'blctl v@0@, GPLv2, Copyright (C) 2016-2017 Hemmo Nieminen'.format(meson.project_version()),
-			BLCTL.full_path(), '--version'
+			blctl.full_path(), '--version'
 	]
 )
 
@@ -84,7 +81,7 @@ test(
 	TESTER,
 	args :
 	[
-		SYSDIR_SRC, SYSDIR_DST, '56.7', BLCTL_TEST_STATIC.full_path()
+		SYSDIR_SRC, SYSDIR_DST, '56.7', blctl_tester.full_path()
 	],
 	is_parallel : false
 )
@@ -96,7 +93,7 @@ test(
 	TESTER,
 	args :
 	[
-		SYSDIR_SRC, SYSDIR_DST, '66.7', BLCTL_TEST_STATIC.full_path(), '--adjust', '10%'
+		SYSDIR_SRC, SYSDIR_DST, '66.7', blctl_tester.full_path(), '--adjust', '10%'
 	],
 	is_parallel : false
 )
@@ -106,7 +103,7 @@ test(
 	TESTER,
 	args :
 	[
-		SYSDIR_SRC, SYSDIR_DST, '46.7', BLCTL_TEST_STATIC.full_path(), '--adjust', '-10%'
+		SYSDIR_SRC, SYSDIR_DST, '46.7', blctl_tester.full_path(), '--adjust', '-10%'
 	],
 	is_parallel : false
 )
@@ -116,7 +113,7 @@ test(
 	TESTER,
 	args :
 	[
-		SYSDIR_SRC, SYSDIR_DST, '', BLCTL_TEST_STATIC.full_path(), '--adjust', '-10%', '--quiet'
+		SYSDIR_SRC, SYSDIR_DST, '', blctl_tester.full_path(), '--adjust', '-10%', '--quiet'
 	],
 	is_parallel : false
 )
@@ -126,7 +123,7 @@ test(
 	TESTER,
 	args :
 	[
-		SYSDIR_SRC, SYSDIR_DST, '100.0', BLCTL_TEST_STATIC.full_path(), '--adjust', '100%'
+		SYSDIR_SRC, SYSDIR_DST, '100.0', blctl_tester.full_path(), '--adjust', '100%'
 	],
 	is_parallel : false
 )
@@ -136,7 +133,7 @@ test(
 	TESTER,
 	args :
 	[
-		SYSDIR_SRC, SYSDIR_DST, '', BLCTL_TEST_STATIC.full_path(), '--adjust', '100%', '--quiet'
+		SYSDIR_SRC, SYSDIR_DST, '', blctl_tester.full_path(), '--adjust', '100%', '--quiet'
 	],
 	is_parallel : false
 )
@@ -146,7 +143,7 @@ test(
 	TESTER,
 	args :
 	[
-		SYSDIR_SRC, SYSDIR_DST, '0.0', BLCTL_TEST_STATIC.full_path(), '--adjust', '-100%'
+		SYSDIR_SRC, SYSDIR_DST, '0.0', blctl_tester.full_path(), '--adjust', '-100%'
 	],
 	is_parallel : false
 )
@@ -156,7 +153,7 @@ test(
 	TESTER,
 	args :
 	[
-		SYSDIR_SRC, SYSDIR_DST, '', BLCTL_TEST_STATIC.full_path(), '--adjust', '-100%', '--quiet'
+		SYSDIR_SRC, SYSDIR_DST, '', blctl_tester.full_path(), '--adjust', '-100%', '--quiet'
 	],
 	is_parallel : false
 )
@@ -166,7 +163,7 @@ test(
 	TESTER,
 	args :
 	[
-		SYSDIR_SRC, SYSDIR_DST, '100.0', BLCTL_TEST_STATIC.full_path(), '--adjust', '150%'
+		SYSDIR_SRC, SYSDIR_DST, '100.0', blctl_tester.full_path(), '--adjust', '150%'
 	],
 	is_parallel : false
 )
@@ -176,7 +173,7 @@ test(
 	TESTER,
 	args :
 	[
-		SYSDIR_SRC, SYSDIR_DST, '0.0', BLCTL_TEST_STATIC.full_path(), '--adjust', '-150%'
+		SYSDIR_SRC, SYSDIR_DST, '0.0', blctl_tester.full_path(), '--adjust', '-150%'
 	],
 	is_parallel : false
 )
@@ -188,7 +185,7 @@ test(
 	TESTER,
 	args :
 	[
-		SYSDIR_SRC, SYSDIR_DST, '27.0', BLCTL_TEST_STATIC.full_path(), '--set', '27%'
+		SYSDIR_SRC, SYSDIR_DST, '27.0', blctl_tester.full_path(), '--set', '27%'
 	],
 	is_parallel : false
 )
@@ -198,7 +195,7 @@ test(
 	TESTER,
 	args :
 	[
-		SYSDIR_SRC, SYSDIR_DST, '', BLCTL_TEST_STATIC.full_path(), '--set', '27%', '--quiet'
+		SYSDIR_SRC, SYSDIR_DST, '', blctl_tester.full_path(), '--set', '27%', '--quiet'
 	],
 	is_parallel : false
 )
@@ -208,7 +205,7 @@ test(
 	TESTER,
 	args :
 	[
-		SYSDIR_SRC, SYSDIR_DST, '0.0', BLCTL_TEST_STATIC.full_path(), '--set', '0'
+		SYSDIR_SRC, SYSDIR_DST, '0.0', blctl_tester.full_path(), '--set', '0'
 	],
 	is_parallel : false
 )
@@ -218,7 +215,7 @@ test(
 	TESTER,
 	args :
 	[
-		SYSDIR_SRC, SYSDIR_DST, '', BLCTL_TEST_STATIC.full_path(), '--set', '0', '--quiet'
+		SYSDIR_SRC, SYSDIR_DST, '', blctl_tester.full_path(), '--set', '0', '--quiet'
 	],
 	is_parallel : false
 )
@@ -228,7 +225,7 @@ test(
 	TESTER,
 	args :
 	[
-		SYSDIR_SRC, SYSDIR_DST, '100.0', BLCTL_TEST_STATIC.full_path(), '--set', '100'
+		SYSDIR_SRC, SYSDIR_DST, '100.0', blctl_tester.full_path(), '--set', '100'
 	],
 	is_parallel : false
 )
@@ -238,7 +235,7 @@ test(
 	TESTER,
 	args :
 	[
-		SYSDIR_SRC, SYSDIR_DST, '', BLCTL_TEST_STATIC.full_path(), '--set', '100', '--quiet'
+		SYSDIR_SRC, SYSDIR_DST, '', blctl_tester.full_path(), '--set', '100', '--quiet'
 	],
 	is_parallel : false
 )
@@ -248,7 +245,7 @@ test(
 	TESTER,
 	args :
 	[
-		SYSDIR_SRC, SYSDIR_DST, '', BLCTL_TEST_STATIC.full_path(), '--set', '100.1%'
+		SYSDIR_SRC, SYSDIR_DST, '', blctl_tester.full_path(), '--set', '100.1%'
 	],
 	is_parallel : false,
 	should_fail : true
@@ -259,7 +256,7 @@ test(
 	TESTER,
 	args :
 	[
-		SYSDIR_SRC, SYSDIR_DST, '', BLCTL_TEST_STATIC.full_path(), '--set', '-0.1%'
+		SYSDIR_SRC, SYSDIR_DST, '', blctl_tester.full_path(), '--set', '-0.1%'
 	],
 	is_parallel : false,
 	should_fail : true

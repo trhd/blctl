@@ -19,8 +19,7 @@ project(
 	'c',
 	version : '1.0.11',
 	license : 'GPLv3',
-	default_options :
-	[
+	default_options : [
 		'werror=true',
 		'warning_level=3',
 		'stdsplit=false',
@@ -28,26 +27,21 @@ project(
 	]
 )
 
-
-OPTARGS = subproject('optargs')
-OPTARGS_HDR = OPTARGS.get_variable('OPTARGS_HDR')
-OPTARGS_SRC = OPTARGS.get_variable('OPTARGS_SRC')
-
 defines = [
 	'-DSYSDIR_PATH="' + get_option('SYSDIR_PATH') + '"',
 	'-DBLCTL_VERSION="' + meson.project_version() + '"'
 ]
+
 if get_option('buildtype') == 'release'
 	defines += [ '-DNDEBUG' ]
 endif
 
-BLCTL = executable(
+optargs = dependency('optargs', fallback : [ 'optargs', 'dep' ])
+
+blctl = executable(
 	'blctl',
-	[
-		'blctl.c',
-		OPTARGS_SRC
-	],
-	include_directories : OPTARGS_HDR,
+	'blctl.c',
+	dependencies : optargs,
 	c_args : defines,
 	install : true
 )
