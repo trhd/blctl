@@ -77,7 +77,7 @@ test(
 )
 
 test(
-	'tester:',
+	'tester: (no args)',
 	TESTER,
 	args :
 	[
