@@ -1,0 +1,4 @@
+[wrap-git]
+directory = optargs
+url = https://github.com/trhd/optargs
+revision = v5.0.1
