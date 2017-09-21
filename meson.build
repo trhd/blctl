@@ -36,7 +36,7 @@ if get_option('buildtype') == 'release'
 	defines += [ '-DNDEBUG' ]
 endif
 
-optargs = dependency('optargs', fallback : [ 'optargs', 'dep' ])
+optargs = dependency('optargs', fallback : [ 'optargs', 'dep' ], static : true)
 
 blctl = executable(
 	'blctl',
