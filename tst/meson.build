@@ -71,7 +71,7 @@ test(
 	args :
 	[
 		SYSDIR_SRC, SYSDIR_DST,
-			'blctl v@0@, GPLv2, Copyright (C) 2016-2017 Hemmo Nieminen'.format(meson.project_version()),
+			'blctl v@0@, GPLv3, Copyright (C) 2016-2017 Hemmo Nieminen'.format(meson.project_version()),
 			blctl.full_path(), '--version'
 	]
 )
