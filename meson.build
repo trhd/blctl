@@ -19,11 +19,13 @@ project(
 	'c',
 	version : '2.0.0',
 	license : 'GPLv3',
+	meson_version : '0.45.0',
 	default_options : [
 		'werror=true',
 		'warning_level=3',
 		'stdsplit=false',
-		'c_std=c11'
+		'c_std=c11',
+		'b_ndebug=if-release'
 	]
 )
 
@@ -31,10 +33,6 @@ defines = [
 	'-DSYSDIR_PATH="' + get_option('SYSDIR_PATH') + '"',
 	'-DBLCTL_VERSION="' + meson.project_version() + '"'
 ]
-
-if get_option('buildtype') == 'release'
-	defines += [ '-DNDEBUG' ]
-endif
 
 optargs = dependency('optargs', fallback : [ 'optargs', 'dep' ], static : true)
 
