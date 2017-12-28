@@ -17,7 +17,7 @@
 project(
 	'blctl',
 	'c',
-	version : '2.0.0',
+	version : '2.1.0',
 	license : 'GPLv3',
 	meson_version : '0.45.0',
 	default_options : [
