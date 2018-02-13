@@ -1,6 +1,6 @@
 /**
  * blctl -- A small utility for controlling a backlight's brightness.
- * Copyright (C) 2016-2017 Hemmo Nieminen
+ * Copyright (C) 2016-2018 Hemmo Nieminen
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -333,7 +333,7 @@ set_percentage_to(const char *p)
 int
 main(int ac, char **av)
 {
-	struct optargs_opt opts[] =
+	struct optargs_option opts[] =
 	{
 		[ADJUST] =
 		{
@@ -341,13 +341,13 @@ main(int ac, char **av)
 				"percentage.",
 			.long_option = "adjust",
 			.short_option = 'a',
-			.argument = (struct optargs_arg [])
+			.argument = (struct optargs_argument [])
 			{
 				{
 					.name = "pct",
-					.type = optargs_arg_any
+					.type = optargs_argument_any
 				},
-				optargs_arg_eol
+				optargs_argument_eol
 			}
 		},
 
@@ -357,13 +357,13 @@ main(int ac, char **av)
 				"percentage.",
 			.long_option = "set",
 			.short_option = 's',
-			.argument = (struct optargs_arg [])
+			.argument = (struct optargs_argument [])
 			{
 				{
 					.name = "pct",
-					.type = optargs_arg_any
+					.type = optargs_argument_any
 				},
-				optargs_arg_eol
+				optargs_argument_eol
 			}
 		},
 
@@ -388,30 +388,30 @@ main(int ac, char **av)
 			.short_option = 'v'
 		},
 
-		[_ACTION_COUNT] = optargs_opt_eol
+		[_ACTION_COUNT] = optargs_option_eol
 	};
 	const char *set, *adj;
 
-	if (optargs_parse_opts(ac, (const char **)av, opts) < 0)
+	if (optargs_parse_options(ac, (const char **)av, opts) < 0)
 	{
 		optargs_print_help(av[0], about, opts, NULL);
 		return EXIT_FAILURE;
 	}
 
-	if (optargs_opt_count_by_index(opts, HELP))
+	if (optargs_option_count(opts, HELP))
 	{
 		optargs_print_help(av[0], about, opts, NULL);
 		return EXIT_SUCCESS;
 	}
 
-	if (optargs_opt_count_by_index(opts, VERSION))
+	if (optargs_option_count(opts, VERSION))
 	{
 		print_version_information();
 		return EXIT_SUCCESS;
 	}
 
-	adj = optargs_opt_value_by_index(opts, ADJUST);
-	set = optargs_opt_value_by_index(opts, SET);
+	adj = optargs_option_string(opts, ADJUST);
+	set = optargs_option_string(opts, SET);
 
 	if (set && adj)
 	{
@@ -426,7 +426,7 @@ main(int ac, char **av)
 	if (adj && adjust_current_percentage_by(adj))
 		return EXIT_FAILURE;
 
-	if (optargs_opt_count_by_long(opts, "quiet"))
+	if (optargs_option_count(opts, QUIET))
 		return EXIT_SUCCESS;
 
 	return print_percentage() ? EXIT_FAILURE : EXIT_SUCCESS;
