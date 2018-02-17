@@ -47,7 +47,7 @@ enum action
 static void
 print_version_information()
 {
-	printf("blctl v" BLCTL_VERSION ", GPLv3, Copyright (C) 2016-2017 Hemmo Nieminen\n");
+	printf("blctl v" BLCTL_VERSION ", GPLv3, Copyright (C) 2016-2018 Hemmo Nieminen\n");
 }
 
 /************************************************************************/

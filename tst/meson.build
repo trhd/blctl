@@ -1,5 +1,5 @@
 # blctl -- A small utility for controlling a backlight's brightness.
-# Copyright (C) 2016-2017 Hemmo Nieminen
+# Copyright (C) 2016-2018 Hemmo Nieminen
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -71,7 +71,7 @@ test(
 	args :
 	[
 		SYSDIR_SRC, SYSDIR_DST,
-			'blctl v@0@, GPLv3, Copyright (C) 2016-2017 Hemmo Nieminen'.format(meson.project_version()),
+			'blctl v@0@, GPLv3, Copyright (C) 2016-2018 Hemmo Nieminen'.format(meson.project_version()),
 			blctl.full_path(), '--version'
 	]
 )
