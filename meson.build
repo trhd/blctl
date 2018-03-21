@@ -19,7 +19,7 @@ project(
 	'c',
 	version : '2.1.1',
 	license : 'GPLv3',
-	meson_version : '0.45.0',
+	meson_version : '>=0.45.0',
 	default_options : [
 		'werror=true',
 		'warning_level=3',
