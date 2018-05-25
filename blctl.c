@@ -398,20 +398,20 @@ main(int ac, char **av)
 		return EXIT_FAILURE;
 	}
 
-	if (optargs_option_count(opts, HELP))
+	if (optargs_option_count(&opts[HELP]))
 	{
 		optargs_print_help(av[0], about, opts, NULL);
 		return EXIT_SUCCESS;
 	}
 
-	if (optargs_option_count(opts, VERSION))
+	if (optargs_option_count(&opts[VERSION]))
 	{
 		print_version_information();
 		return EXIT_SUCCESS;
 	}
 
-	adj = optargs_option_string(opts, ADJUST);
-	set = optargs_option_string(opts, SET);
+	adj = optargs_option_string(&opts[ADJUST]);
+	set = optargs_option_string(&opts[SET]);
 
 	if (set && adj)
 	{
@@ -426,7 +426,7 @@ main(int ac, char **av)
 	if (adj && adjust_current_percentage_by(adj))
 		return EXIT_FAILURE;
 
-	if (optargs_option_count(opts, QUIET))
+	if (optargs_option_count(&opts[QUIET]))
 		return EXIT_SUCCESS;
 
 	return print_percentage() ? EXIT_FAILURE : EXIT_SUCCESS;

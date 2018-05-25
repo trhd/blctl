@@ -1,4 +1,4 @@
 [wrap-git]
 directory = optargs
 url = https://github.com/trhd/optargs
-revision = 916eb7a503e6973fecad670eef0de6520ac1792d
+revision = v7.0.0
