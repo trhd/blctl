@@ -1,17 +1,18 @@
 {
-   BashError1
+   BashErrors
    Memcheck:Leak
-   match-leak-kinds: reachable
    ...
    obj:/usr/bin/bash
-   fun:main
 }
 {
-   BashError2
-   Memcheck:Leak
-   match-leak-kinds: definite
+   BashErrors
+   Memcheck:Cond
    ...
-   fun:set_default_locale
-   fun:main
+   obj:/usr/bin/bash
 }
-
+{
+   GrepErrors
+   Memcheck:Leak
+   ...
+   obj:/usr/bin/grep
+}

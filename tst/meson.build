@@ -18,16 +18,14 @@
 
 SYSDIR_SRC = meson.current_source_dir() + '/intel_backlight'
 SYSDIR_DST = meson.current_build_dir() + '/intel_backlight'
-TESTER = find_program('tester.sh')
+TESTER = find_program('./tester.sh')
+VERSION_TESTER = find_program('./version_tester.sh')
 find_program('sh')
 blctl_tester = executable(
-	'blctl_tester',
-	meson.source_root() + '/blctl.c',
-	c_args :
-	[
-		'-DSYSDIR_PATH="' + SYSDIR_DST + '"',
-		'-DBLCTL_VERSION="' + meson.project_version() + '"'
-	],
+	'blctl_tester', version,
+	files('../blctl.c'),
+	include_directories : include_directories('..'),
+	c_args : '-DSYSDIR_PATH="' + SYSDIR_DST + '"',
 	dependencies : optargs
 )
 
@@ -67,11 +65,10 @@ test(
 
 test(
 	'prod: --version',
-	TESTER,
+	VERSION_TESTER,
 	args :
 	[
-		SYSDIR_SRC, SYSDIR_DST,
-			'blctl v@0@, GPLv3, Copyright (C) 2016-2018 Hemmo Nieminen'.format(meson.project_version()),
+			join_paths(meson.current_build_dir(), '..', 'blctl_version.h'),
 			blctl.full_path(), '--version'
 	]
 )

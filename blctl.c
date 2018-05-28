@@ -24,6 +24,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include "optargs.h"
+#include "blctl_version.h"
 
 static const char *about = "This utility will read a backlight's "
 	"brightness from\n\n  " SYSDIR_PATH "\n\nand display it to the user "
@@ -47,7 +48,7 @@ enum action
 static void
 print_version_information()
 {
-	printf("blctl v" BLCTL_VERSION ", GPLv3, Copyright (C) 2016-2018 Hemmo Nieminen\n");
+	printf("blctl " BLCTL_VERSION ", GPLv3, Copyright (C) 2016-2018 Hemmo Nieminen\n");
 }
 
 /************************************************************************/

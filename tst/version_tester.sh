@@ -1,5 +1,7 @@
+#!/bin/sh
+
 # blctl -- A small utility for controlling a backlight's brightness.
-# Copyright (C) 2016-2018 Hemmo Nieminen
+# Copyright (C) 2018 Hemmo Nieminen
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,30 +16,13 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-project(
-	'blctl',
-	'c',
-	version : '2.1.1',
-	license : 'GPLv3',
-	meson_version : '>=0.45.0',
-	default_options : [
-		'werror=true',
-		'warning_level=3',
-		'stdsplit=false',
-		'c_std=c11',
-		'b_ndebug=if-release'
-	]
-)
-
-optargs = dependency('optargs', fallback : [ 'optargs', 'dep' ], static : true)
-version = vcs_tag(input : 'blctl_version.h.in', output : 'blctl_version.h')
-
-blctl = executable(
-	'blctl', version,
-	'blctl.c',
-	dependencies : optargs,
-	c_args : '-DSYSDIR_PATH="' + get_option('SYSDIR_PATH') + '"',
-	install : true
-)
-
-subdir('tst')
+set -e
+VER=$(grep -Eo '"[^"]+"' "$1")
+VER=${VER#\"}
+VER=${VER%\"}
+RET="blctl $VER, GPLv3, Copyright (C) 2016-2018 Hemmo Nieminen"
+printf "Expecting output : '%s'\n" "$RET"
+shift 1
+OUT="$("$@")"
+printf "Got output       : '%s'\n" "$OUT"
+[ "$OUT" = "$RET" ]
