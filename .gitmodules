@@ -1,6 +1,0 @@
-[submodule "subprojects/optargs"]
-	path = subprojects/optargs
-	url = https://github.com/trhd/optargs
-[submodule ".travis"]
-	path = .travis
-	url = https://github.com/trhd/travis.git
